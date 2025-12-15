@@ -1,0 +1,58 @@
+# دليل العصر - Docker Compose
+# ============================
+# للتشغيل: docker-compose up -d
+
+version: '3.8'
+
+services:
+  dalilaleasr-bot:
+    build: .
+    container_name: dalilaleasr-bot
+    restart: unless-stopped
+    
+    # Environment Variables - قم بتعديلها!
+    environment:
+      # مفاتيح OpenRouter API (أضف مفاتيحك هنا)
+      - OPENROUTER_KEY_1=${OPENROUTER_KEY_1}
+      - OPENROUTER_KEY_2=${OPENROUTER_KEY_2}
+      - OPENROUTER_KEY_3=${OPENROUTER_KEY_3}
+      - OPENROUTER_KEY_4=${OPENROUTER_KEY_4}
+      - OPENROUTER_KEY_5=${OPENROUTER_KEY_5}
+      - OPENROUTER_KEY_6=${OPENROUTER_KEY_6}
+      
+      # إعدادات WordPress
+      - WP_DOMAIN=${WP_DOMAIN:-https://dalilaleasr.com}
+      - WP_USER=${WP_USER:-admin}
+      - WP_APP_PASS=${WP_APP_PASS}
+      
+      # العلامة المائية
+      - WATERMARK_TEXT=${WATERMARK_TEXT:-dalilaleasr.com}
+      
+      # Bing Cookie (اختياري)
+      - BING_COOKIE=${BING_COOKIE:-}
+      
+      # المنطقة الزمنية
+      - TZ=Asia/Riyadh
+    
+    # Volume للحفاظ على قاعدة البيانات
+    volumes:
+      - dalilaleasr-data:/app/data
+    
+    # الموارد (اختياري)
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    
+    # السجلات
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  dalilaleasr-data:
+    driver: local
