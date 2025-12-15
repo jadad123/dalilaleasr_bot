@@ -208,26 +208,26 @@ for category, feeds in RSS_FEEDS.items():
 
 # ==========================================
 # ==========================================
-# 2. خريطة الأقسام الشاملة (Final)
+# 2. خريطة الأقسام (من Environment Variables)
 # ==========================================
-CATEGORY_MAP = {
-    # أخبار (فرعية)
-    "سياسة": 46,
-    "صحة وطب": 9,
-    " الرياضة": 109,
+# القيمة الافتراضية في حال عدم وجود المتغير
+CATEGORY_MAP = {"News": 1, "Uncategorized": 1}
+DEFAULT_CATEGORY_ID = 1
 
-    # اقتصاد (فرعية)
-    "عملات رقمية": 35,
+# قراءة المتغير من Coolify
+env_cats_json = os.getenv("CATEGORY_MAP_JSON", "")
 
-    # تقنية (فرعية)
-    "ذكاء اصطناعي": 11,
-    "أمن المعلومات": 146,
-    "برامج": 145,
-    "أجهزة": 102,
-}
-
-# في حال فشل تحديد التصنيف
-DEFAULT_CATEGORY_ID = 2  # أخبار
+if env_cats_json:
+    try:
+        # تحويل نص JSON إلى قاموس بايثون
+        loaded_cats = json.loads(env_cats_json)
+        CATEGORY_MAP = loaded_cats
+        print(f"   ✅ تم تحميل {len(CATEGORY_MAP)} قسم من Environment Variables.")
+    except json.JSONDecodeError as e:
+        print(f"   ⚠️ خطأ في قراءة CATEGORY_MAP_JSON: {e}")
+        print("   -> تأكد من أن الصيغة JSON صحيحة، مثال: {\"سياسة\": 46, \"اقتصاد\": 50}")
+else:
+    print("   ⚠️ لم يتم العثور على CATEGORY_MAP_JSON، سيتم استخدام الافتراضي.")
 
 # ==========================================
 # 3. خريطة الصور الاحتياطية
