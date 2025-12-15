@@ -207,27 +207,26 @@ for category, feeds in RSS_FEEDS.items():
     ALL_FEEDS.extend(feeds)
 
 # ==========================================
-# ==========================================
-# 2. خريطة الأقسام (من Environment Variables)
-# ==========================================
-# القيمة الافتراضية في حال عدم وجود المتغير
-CATEGORY_MAP = {"News": 1, "Uncategorized": 1}
+
+# === تحميل الأقسام من Environment Variables ===
+# القيمة الافتراضية
+CATEGORY_MAP = {"News": 1} 
 DEFAULT_CATEGORY_ID = 1
 
-# قراءة المتغير من Coolify
-env_cats_json = os.getenv("CATEGORY_MAP_JSON", "")
-
-if env_cats_json:
+# قراءة JSON من Coolify
+env_cats = os.getenv("CATEGORY_MAP_JSON", "")
+if env_cats:
     try:
-        # تحويل نص JSON إلى قاموس بايثون
-        loaded_cats = json.loads(env_cats_json)
-        CATEGORY_MAP = loaded_cats
-        print(f"   ✅ تم تحميل {len(CATEGORY_MAP)} قسم من Environment Variables.")
-    except json.JSONDecodeError as e:
-        print(f"   ⚠️ خطأ في قراءة CATEGORY_MAP_JSON: {e}")
-        print("   -> تأكد من أن الصيغة JSON صحيحة، مثال: {\"سياسة\": 46, \"اقتصاد\": 50}")
-else:
-    print("   ⚠️ لم يتم العثور على CATEGORY_MAP_JSON، سيتم استخدام الافتراضي.")
+        # محاولة تنظيف النص في حال وجود أخطاء نسخ ولصق
+        env_cats = env_cats.strip()
+        if env_cats.startswith("CATEGORY_MAP_JSON="): 
+            env_cats = env_cats.replace("CATEGORY_MAP_JSON=", "", 1)
+        
+        CATEGORY_MAP = json.loads(env_cats)
+        print(f"   ✅ تم تحميل خريطة الأقسام: {len(CATEGORY_MAP)} تصنيف")
+    except Exception as e:
+        print(f"   ⚠️ خطأ في قراءة الأقسام من JSON: {e}")
+        print("   -> تأكد من استخدام علامات تنصيص مزدوجة \" في Coolify")
 
 # ==========================================
 # 3. خريطة الصور الاحتياطية
